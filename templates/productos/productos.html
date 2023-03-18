@@ -17,14 +17,14 @@
                 <th></th>
             </thead>
             <tbody>
-                {% for prod in productos %}
+                {% for prod in listaProductos %}
                     <tr>
-                    <td><img src="{{prod.imgPeque.url}}" alt="X"> </td>
-                    <td>{{prod.nombre}}</td>
-                    <td>{{prod.descripcion}}</td>
-                    <td>{{prod.precioUnitario}}</td>
-                    <td>{{prod.existencia}}</td>
-                    <td><a href="" type="button" class="btn btninfo">Ver detalle</a></td>
+                        <td><img src="{{prod.imgPeque.url}}" alt="X"> </td>
+                        <td>{{prod.nombre}}</td>
+                        <td>{{prod.descripcion}}</td>
+                        <td>{{prod.precioUnitario}}</td>
+                        <td>{{prod.existencia}}</td>
+                        <td><a href="" type="button" class="btn btninfo">Ver detalle</a></td>
                     </tr>
                 {% endfor %}
             </tbody>

@@ -15,7 +15,7 @@
                 {% for cat in listaCategorias %}
                     <tr>
                         <td>{{cat.descripCategoria}}</td>
-                        <td><a href="" type="button" class="btn btn-info">Listar
+                        <td><a href="{% url 'productos' cat.id %}" type="button" class="btn btn-info">Listar
                             Productos</a></td>
                     </tr>   
                 {% endfor %}

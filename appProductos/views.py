@@ -1,14 +1,17 @@
-from django.shortcuts import render
-from . import models
+import json
 
+from django.http import JsonResponse
+from django.shortcuts import render
+
+from.models import *
 
 
 # Create your views here.
 def verCategorias(request): 
     #Consulatar datos
-    listaCategorias = models.Categoria.objects.all()
+    listaCategorias     = models.Categoria.objects.all()
     #Enviar datos a la vista
-    context =  { 'listaCategorias' : listaCategorias }
+    context             = { 'listaCategorias' : listaCategorias }
     
     return render(request, 'productos/categorias.html',context)
 
@@ -17,19 +20,133 @@ def verCategorias(request):
 def verProductosCategoria (request,idCategoria):
     
     #Consularta de categorias
-    idCat = int(idCategoria)
+    idCat           = int(idCategoria)
     
-    nombreCat = models.Categoria.objects.get(id=idCat)
+    nombreCat       = models.Categoria.objects.get(id=idCat)
+
+    listaProductos  = Producto.objects.filter(categoria = idCat)
+
+    context         = {
+                        'listaProductos':listaProductos,
+                        'titulo':'Productos de la categoria ' + nombreCat,
+                        }
+    return render(request, 'productos/productos.html',context)
     
     
 def verProducto (request,idProd,msj=None):
-    idProd = int(idProd)
-    regProducto = models.Producto.objects.get(id=idProd)
+    idProd      = int(idProd)
+    regProducto = Producto.objects.get(id=idProd)
     
-    context =  { 'regProducto' : regProducto,
-                'titulo' : 'Detalles de' + str(regProducto.nombre),
-                } 
+    context     =  { 'regProducto' : regProducto,
+                    'titulo' : 'Detalles de' + str(regProducto.nombre),
+                    } 
     if msj:
         context['msj'] = msj
         
     return render(request, 'productos/producto.html',context)
+
+
+
+
+def agregarCarrito (request,idProd):
+    idProd      = int(idProd)
+
+    regUsuario  = request.user
+
+    #leer reg del producto
+    existe      = Producto.objects.filter(id= idProd).exists()
+    if existe:
+        regProducto = Producto.objects.get(id=idProd)
+        
+        #si no existe
+        existe = Carro.objects.filter(usuario=regUsuario,producto=regProducto).exists()
+        if existe:
+            #intancia de clase carro
+            regCarro = Carro.objects.get(usuario=regUsuario,producto=regProducto,estado = 'activo')
+            regCarro.cantidad += 1
+        else:
+            regCarro = Carro(   usuario         =regUsuario,
+                                producto        =regProducto,
+                                cantidad        =1,
+                                precioUnitario  =regProducto.precioUnitario
+                            )
+            #Guardamos el registro
+        regCarro.save()
+        msj = 'Producto agregado al carrito'
+    else:
+        msj = 'Producto no disponible'
+        
+    return verProducto(request,idProd,msj)
+
+
+def verCarrito (request):
+    regUsuario  = request.user
+    listaCarro  = Carro.objects.filter(usuario=regUsuario,estado='activo')
+    context     = {
+                    'listaCarro':listaCarro,
+                    'titulo':'Carrito de compras',
+                    }
+    return render(request, 'productos/carrito.html',context)
+
+
+def eliminarCarrito (request,idProd):
+    #consultamos carro 
+    regCarrito = Carro.objects.get(id=idProd)
+    regCarrito.estado = 'anulado'
+
+    regCarrito.save()
+    return verCarrito(request)
+
+
+def borrarProCarrito (request):
+    if_ajax = request.META.get('HTTP_X_REQUEST_WITH')== 'XMLHttpRequest'
+
+    if if_ajax:
+        if request.method == 'POST':
+            #Tomamos los datos de lado del cliente
+            data = json.load(request)
+            idProd = data.get('id')
+            cantidad = int(data.get('cantidad'))
+            if cantidad > 0 :
+                regCarrito = Carro.objects.get(id=idProd)
+                regCarrito.cantidad = cantidad
+                regCarrito.save()
+            regUsuario  = request.user
+            listaCarro  = Carro.objects.filter(usuario=regUsuario,estado='activo')
+            context     = {
+                            'listaCarro':listaCarro,
+                            'titulo':'Carrito de compras',
+                            }
+            return JsonResponse({
+                'alarma' : 'no se pudo modificar...'},status=400
+                                )
+        else:
+            return verCarrito(request)
+        
+def consultaCarrito(request):
+    #get usuario
+    regUsuario  = request.user
+    #filtar productos de ese usuario en estado activo
+    listaCarro  = Carro.objects.filter(usuario=regUsuario,estado='activo').values(
+    'id',
+    'cantidad',
+    'valUnit',
+    'producto__imgPeque',
+    'producto__nombre',
+    'producto__unidad',
+    'producto__id')
+    #renderizar
+    listado = []
+    subtotal= 0
+    for prod in listaCarro:
+        reg= {
+            'id'        : prod['id'],
+            'cantidad'  : prod['cantidad'],
+            'valUnit'   : prod['valUnit'],
+            'imgPeque'  : prod['producto__imgPeque'],
+            'nombre'    : prod['producto__nombre'],
+            'unidad'    : prod['producto__unidad'],
+            'total'     : prod['valUnit'] * prod['cantidad'],
+            'idProd'    : prod['producto__id'],
+        }
+        subtotal +=prod['valUnit']* prod['cantidad']

@@ -1,5 +1,7 @@
 from django.db import models
+
 from appUsuarios.models import Usuario
+
 
 # Create your models here.
 class Categoria(models.Model):
@@ -18,7 +20,6 @@ class Producto(models.Model):
     decripcion = models.CharField(max_length=300,null=False)
     precioUnitario = models.DecimalField(max_digits=8,decimal_places=2)
     unidad = models.CharField(max_length=10,null=False)
-
     existencia = models.IntegerField(null=False)
     imgGrande = models.ImageField(upload_to='productos',null=False)
     imgPeque = models.ImageField(upload_to='iconos',null=False)
@@ -34,11 +35,16 @@ class Producto(models.Model):
 
 
 class Carro (models.Model):
+    ESTADO_PROD = (
+        ('activo','activo'),
+        ('comprado','comprado'),
+        ('anulado','anulado'),
+    )
     usuario =models.ForeignKey(Usuario,on_delete=models.CASCADE, null=False)
     producto = models.ForeignKey(Producto,on_delete=models.CASCADE, null=False)
     cantidad  = models.IntegerField(null=False)
     precioUnitario = models.DecimalField(max_digits=8,decimal_places=2)
-    estado = models.CharField(max_length=10,null=False)
+    estado = models.CharField(max_length=20,choices=ESTADO_PROD,default='activo')
     fechaCompra = models.DateTimeField(auto_now_add=True)
     
     class Meta:
