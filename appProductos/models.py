@@ -1,5 +1,5 @@
 from django.db import models
-
+from appUsuarios.models import Usuario
 
 # Create your models here.
 class Categoria(models.Model):
@@ -29,4 +29,19 @@ class Producto(models.Model):
     class Meta:
         verbose_name = 'Producto'
         verbose_name_plural = 'Productos'
+        #ordering = ['descripProducto']
+        
+
+
+class Carro (models.Model):
+    usuario =models.ForeignKey(Usuario,on_delete=models.CASCADE, null=False)
+    producto = models.ForeignKey(Producto,on_delete=models.CASCADE, null=False)
+    cantidad  = models.IntegerField(null=False)
+    precioUnitario = models.DecimalField(max_digits=8,decimal_places=2)
+    estado = models.CharField(max_length=10,null=False)
+    fechaCompra = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Carro'
+        verbose_name_plural = 'Carros'
         #ordering = ['descripProducto']

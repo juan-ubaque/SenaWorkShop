@@ -76,6 +76,12 @@ WSGI_APPLICATION = 'workShop.wsgi.application'
 
 #Configuramos nuestras modificaciones de Usuarios de Django
 AUTH_USER_MODEL = 'appUsuarios.Usuario'
+#Super usuario
+#Email:juan@gmail.com
+#Password:12345
+#First name: juan
+#Last name: ubaque
+#Username: jubaque
 
 
 # Database
