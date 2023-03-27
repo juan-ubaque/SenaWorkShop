@@ -25,6 +25,7 @@ def login (request):
 
 #DESACTIVACION DE USUARIO
 @login_required(login_url='/usuarios/login/')
+
 def logout(request):
     auth.logout(request)
     return redirect('login')

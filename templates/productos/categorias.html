@@ -2,20 +2,20 @@
 <br>
 
 {% block content %}
-    <div class="mb-3 descripcion text-center">
+    <div class="m-4 descripcion text-center">
         <h4>{{titulo}}</h4>
     </div>
-    <div class="row">
-        <table class="table">
+    <div class="row container m-3">
+        <table class="table table-striped m-4 table-dark">
             <thead>
-                <th>Descripción Categoria</th>
+                <th scope="col">Descripción Categoria</th>
                 <th></th>
             </thead>
             <tbody>
                 {% for cat in listaCategorias %}
                     <tr>
-                        <td>{{cat.descripCategoria}}</td>
-                        <td><a href="{% url 'productos' cat.id %}" type="button" class="btn btn-info">Listar
+                        <td >{{cat.descripCategoria}}</td>
+                        <td ><a href="{% url 'Productos' cat.id %}" type="button" class="btn btn-success">Listar
                             Productos</a></td>
                     </tr>   
                 {% endfor %}

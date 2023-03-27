@@ -14,10 +14,12 @@
                     <h4 class="text-muted fw-light">/{{producto.unidad}}</h4>
                     <br>
                     <ul class="list-unstyled mt-3 mb-4">
-                        <p>{{producto.descripcion}}</p>
+                        <p>{{producto.decripcion}}</p>
                         <p>{{producto.existencia}} en existencia</p>
                     </ul>
-                    <a href="{% url 'agregarCarro' producto.id %}" type="button"
+                    <a href="{% comment %}
+                        {% url 'agregarCarro' producto.id %}
+                    {% endcomment %}" type="button"
                     class="w-100 btn btn-lg btn-outline-primary">Agregar al
                     carrito</a>
                 </div>

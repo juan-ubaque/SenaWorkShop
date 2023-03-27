@@ -3,16 +3,16 @@ import json
 from django.core.mail import EmailMessage
 from django.http import JsonResponse
 from django.shortcuts import render
-
-from.models import *
-
+from .models import Categoria, Producto
 
 # Create your views here.
 def verCategorias(request): 
     #Consulatar datos
-    listaCategorias     = models.Categoria.objects.all()
+    listaCategorias     = Categoria.objects.all()
     #Enviar datos a la vista
-    context             = { 'listaCategorias' : listaCategorias }
+    context             = { 
+                            'listaCategorias' : listaCategorias,
+                            'titulo' : 'Categorias de Productos',}
     
     return render(request, 'productos/categorias.html',context)
 
@@ -23,23 +23,24 @@ def verProductosCategoria (request,idCategoria):
     #Consularta de categorias
     idCat           = int(idCategoria)
     
-    nombreCat       = models.Categoria.objects.get(id=idCat)
+    nombreCat       = Categoria.objects.get(id=idCat)
 
     listaProductos  = Producto.objects.filter(categoria = idCat)
 
     context         = {
                         'listaProductos':listaProductos,
-                        'titulo':'Productos de la categoria ' + nombreCat,
+                        'titulo':'Productos de la categoria ' + str(nombreCat),
                         }
     return render(request, 'productos/productos.html',context)
     
     
-def verProducto (request,idProd,msj=None):
-    idProd      = int(idProd)
+def verProducto (request,idProducto,msj=None):
+    idProd      = int(idProducto)
     regProducto = Producto.objects.get(id=idProd)
     
-    context     =  { 'regProducto' : regProducto,
-                    'titulo' : 'Detalles de' + str(regProducto.nombre),
+    context     =  { 
+                    'producto' : regProducto,
+                    'titulo' : 'Detalles de  ' + str(regProducto.nombre),
                     } 
     if msj:
         context['msj'] = msj

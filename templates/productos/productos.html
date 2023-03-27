@@ -3,28 +3,29 @@
 
 {% block content %}
     <br>
-    <div class="mb-3 descripcion text-center">
+    <div class="m-4 descripcion text-center">
         <h2>{{titulo}}</h2>
     </div>
-    <div class="row">
-        <table class="table">
+    <div class="row container m-3">
+        <table class="table table-striped m-4 table-dark">
             <thead>
-                <th></th>
-                <th>nombre</th>
-                <th>Descripción</th>
-                <th>Precio</th>
-                <th>Existencia</th>
-                <th></th>
+                <th scope="col"></th>
+                <th scope="col">nombre</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Existencia</th>
+                <th scope="col">Acciones</th>
             </thead>
             <tbody>
                 {% for prod in listaProductos %}
                     <tr>
                         <td><img src="{{prod.imgPeque.url}}" alt="X"> </td>
                         <td>{{prod.nombre}}</td>
-                        <td>{{prod.descripcion}}</td>
+                        <td>{{prod.decripcion}}</td>
                         <td>{{prod.precioUnitario}}</td>
                         <td>{{prod.existencia}}</td>
-                        <td><a href="" type="button" class="btn btninfo">Ver detalle</a></td>
+                        <td><a href="{% url 'un_producto' prod.id %}" type="button" class="btn btn-info">Ver detalle</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
